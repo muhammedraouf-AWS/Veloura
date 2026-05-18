@@ -1,5 +1,6 @@
-# Local planning — never commit
+# Local planning & tooling — never commit
 project-context.md
+.agents/
 
 # Dependencies
 node_modules/
