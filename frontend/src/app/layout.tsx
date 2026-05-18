@@ -1,16 +1,27 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { AppProviders } from "@/providers";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-cormorant",
+});
 
 export const metadata: Metadata = {
   title: {
     default: "Veloura",
     template: "%s | Veloura",
   },
-  description: "Discover premium fragrances at Veloura.",
+  description: "Discover premium fragrances curated for the discerning nose.",
 };
 
 export default function RootLayout({
@@ -19,8 +30,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full antialiased", "font-sans", geist.variable)}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${cormorant.variable} h-full`}
+    >
+      <body className="min-h-full flex flex-col antialiased font-sans">
+        <AppProviders>
+          <Header />
+          <main className="flex flex-1 flex-col">{children}</main>
+          <Footer />
+        </AppProviders>
+      </body>
     </html>
   );
 }
