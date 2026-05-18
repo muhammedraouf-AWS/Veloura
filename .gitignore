@@ -1,6 +1,7 @@
 # Local planning & tooling — never commit
 project-context.md
 .agents/
+skills-lock.json
 
 # Dependencies
 node_modules/
