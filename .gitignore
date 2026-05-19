@@ -1,5 +1,6 @@
 # Local planning & tooling — never commit
 project-context.md
+PRODUCT.md
 .agents/
 skills-lock.json
 
