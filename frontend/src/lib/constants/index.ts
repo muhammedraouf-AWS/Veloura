@@ -3,7 +3,7 @@ export const AUTH_COOKIE = "veloura_token";
 export const STRAPI_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
 
-export const DEFAULT_PAGE_SIZE = 12;
+export const DEFAULT_PAGE_SIZE = 8;
 
 export const ORDER_STATUSES = [
   "pending",
