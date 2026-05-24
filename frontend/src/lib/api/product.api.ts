@@ -48,6 +48,31 @@ export async function getFeaturedProducts(): Promise<ReturnType<typeof normalize
   return normalizeStrapiMany(response);
 }
 
+export async function getProductsByCategory(
+  categorySlug: string,
+  page = 1
+): Promise<{
+  products: ReturnType<typeof normalizeStrapiMany<Product>>;
+  pagination: StrapiListResponse<Product>['meta']['pagination'];
+}> {
+  const response = await strapiClient.get<StrapiListResponse<Product>>({
+    path: '/products',
+    tags: ['products', `category-products-${categorySlug}`],
+    revalidate: 60,
+    params: {
+      ...PRODUCT_LIST_PARAMS,
+      'filters[category][slug][$eq]': categorySlug,
+      'pagination[page]': page,
+      'pagination[pageSize]': DEFAULT_PAGE_SIZE,
+    },
+  });
+
+  return {
+    products: normalizeStrapiMany(response),
+    pagination: response.meta.pagination,
+  };
+}
+
 export async function getProductBySlug(slug: string): Promise<ReturnType<typeof normalizeStrapiOne<Product>> | null> {
   const response = await strapiClient.get<StrapiListResponse<Product>>({
     path: '/products',
