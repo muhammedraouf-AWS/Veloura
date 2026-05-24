@@ -43,6 +43,7 @@ export type AuthUser = {
   email: string;
   confirmed: boolean;
   blocked: boolean;
+  createdAt?: string;
 };
 
 export type AuthResponse = {

@@ -2,9 +2,14 @@ import Link from "next/link";
 import { Search, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "./mobile-nav";
+import { UserMenu } from "./user-menu";
 import { siteConfig } from "@/config/site";
+import { getAuthToken } from "@/lib/utils/auth";
 
-export function Header() {
+export async function Header() {
+  const token = await getAuthToken();
+  const isLoggedIn = !!token;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -48,17 +53,9 @@ export function Header() {
             <ShoppingBag className="h-5 w-5" />
           </Button>
 
-          {/* Auth — state wired in Phase 15 */}
-          <div className="hidden md:flex items-center gap-2 ml-2">
-            <Button variant="ghost" size="sm" render={<Link href="/login" />}>
-              Sign in
-            </Button>
-            <Button size="sm" render={<Link href="/register" />}>
-              Register
-            </Button>
-          </div>
+          <UserMenu isLoggedIn={isLoggedIn} />
 
-          <MobileNav />
+          <MobileNav isLoggedIn={isLoggedIn} />
         </div>
       </div>
     </header>
