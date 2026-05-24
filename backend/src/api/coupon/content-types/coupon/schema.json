@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "coupons",
+  "info": {
+    "singularName": "coupon",
+    "pluralName": "coupons",
+    "displayName": "Coupon",
+    "description": "Discount coupons — percentage or fixed amount off"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["percentage", "fixed"],
+      "required": true
+    },
+    "value": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "minOrderAmount": {
+      "type": "decimal",
+      "min": 0
+    },
+    "maxUses": {
+      "type": "integer",
+      "min": 1
+    },
+    "usedCount": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "expiresAt": {
+      "type": "datetime"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}
