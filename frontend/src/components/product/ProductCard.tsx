@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { QuickAddButton } from './QuickAddButton';
 import type { Product, StrapiEntity } from '@/types';
 
 type Props = {
@@ -49,6 +50,18 @@ export function ProductCard({ product }: Props) {
               -{discountPct}%
             </span>
           )}
+        </div>
+
+        {/* Quick-add overlay — slides up on hover */}
+        <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+          <QuickAddButton
+            productId={product.id}
+            documentId={product.documentId}
+            slug={slug}
+            title={title}
+            image={imageUrl ?? ''}
+            price={price}
+          />
         </div>
       </div>
 

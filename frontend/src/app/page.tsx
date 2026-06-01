@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Reveal } from "@/components/shared/reveal"
 import { getFeaturedProducts } from "@/lib/api/product.api"
 import { getCategories } from "@/lib/api/category.api"
+import { QuickAddButton } from "@/components/product/QuickAddButton"
 import type { Category, Product, StrapiEntity } from "@/types"
 
 // ── Static assets (hero + brand story only — categories now from Strapi) ──────
@@ -199,6 +200,18 @@ function FeaturedSection({ products }: { products: StrapiEntity<Product>[] }) {
                 </span>
               </div>
             </div>
+
+            {/* Quick-add overlay */}
+            <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+              <QuickAddButton
+                productId={hero.id}
+                documentId={hero.documentId}
+                slug={hero.slug}
+                title={hero.title}
+                image={heroImg ?? ''}
+                price={hero.price}
+              />
+            </div>
           </Link>
 
           {/* Secondary cards */}
@@ -225,6 +238,18 @@ function FeaturedSection({ products }: { products: StrapiEntity<Product>[] }) {
                     {product.title}
                   </h3>
                   <p className="text-xs text-cream/60">{formatPrice(product.price)}</p>
+                </div>
+
+                {/* Quick-add overlay */}
+                <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+                  <QuickAddButton
+                    productId={product.id}
+                    documentId={product.documentId}
+                    slug={product.slug}
+                    title={product.title}
+                    image={productImg ?? ''}
+                    price={product.price}
+                  />
                 </div>
               </Link>
             )

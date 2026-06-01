@@ -48,6 +48,8 @@ export default async function ProductDetailPage({ params }: Props) {
 
   const safeImages = images ?? [];
   const safeVariants = (variants ?? []) as StrapiEntity<ProductVariant>[];
+  const firstImageUrl =
+    safeImages[0]?.formats?.medium?.url ?? safeImages[0]?.url ?? '';
 
   return (
     <div className="bg-[oklch(0.97_0.01_60)] min-h-screen">
@@ -105,6 +107,11 @@ export default async function ProductDetailPage({ params }: Props) {
 
             {/* Price + variants + add to cart (client island) */}
             <ProductActions
+              productId={product.id}
+              documentId={product.documentId}
+              slug={slug}
+              title={title}
+              image={firstImageUrl}
               basePrice={price}
               compareAtPrice={compareAtPrice}
               baseInventory={inventory}

@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Search, ShoppingBag } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "./mobile-nav";
 import { UserMenu } from "./user-menu";
+import { CartIconButton } from "./CartIconButton";
 import { siteConfig } from "@/config/site";
 import { getAuthToken } from "@/lib/utils/auth";
 
@@ -43,15 +44,7 @@ export async function Header() {
             <Search className="h-5 w-5" />
           </Button>
 
-          {/* Cart — count wired in Phase 17 */}
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Cart"
-            render={<Link href="/cart" />}
-          >
-            <ShoppingBag className="h-5 w-5" />
-          </Button>
+          <CartIconButton />
 
           <UserMenu isLoggedIn={isLoggedIn} />
 

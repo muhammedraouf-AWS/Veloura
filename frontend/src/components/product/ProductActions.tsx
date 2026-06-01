@@ -1,20 +1,39 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { useCartStore } from '@/lib/store/cart';
 import type { ProductVariant, StrapiEntity } from '@/types';
 
 type Props = {
+  productId: number;
+  documentId: string;
+  slug: string;
+  title: string;
+  image: string;
   basePrice: number;
   compareAtPrice?: number | null;
   baseInventory: number;
   variants: StrapiEntity<ProductVariant>[];
 };
 
-export function ProductActions({ basePrice, compareAtPrice, baseInventory, variants }: Props) {
+export function ProductActions({
+  productId,
+  documentId,
+  slug,
+  title,
+  image,
+  basePrice,
+  compareAtPrice,
+  baseInventory,
+  variants,
+}: Props) {
   const hasVariants = variants.length > 0;
   const [selected, setSelected] = useState<StrapiEntity<ProductVariant> | null>(
     hasVariants ? (variants[0] ?? null) : null
   );
+
+  const addItem = useCartStore((s) => s.addItem);
 
   const price = selected?.price ?? basePrice;
   const inventory = selected?.inventory ?? baseInventory;
@@ -23,6 +42,24 @@ export function ProductActions({ basePrice, compareAtPrice, baseInventory, varia
   const discountPct = hasDiscount
     ? Math.round((1 - price / compareAtPrice) * 100)
     : null;
+
+  function handleAddToCart() {
+    addItem({
+      productId,
+      documentId,
+      variantId: selected?.id,
+      variantDocumentId: selected?.documentId,
+      title,
+      slug,
+      image,
+      price,
+      quantity: 1,
+      variant: selected?.name,
+    });
+    toast.success('Added to cart', {
+      description: selected ? `${title} — ${selected.name}` : title,
+    });
+  }
 
   return (
     <div>
@@ -88,6 +125,7 @@ export function ProductActions({ basePrice, compareAtPrice, baseInventory, varia
       {/* Add to cart + Wishlist */}
       <div className="flex gap-3">
         <button
+          onClick={handleAddToCart}
           disabled={!inStock}
           className="flex-1 py-4 bg-[oklch(0.35_0.12_310)] text-[oklch(0.97_0.01_60)] font-sans text-sm tracking-[0.15em] uppercase hover:bg-[oklch(0.28_0.10_310)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
