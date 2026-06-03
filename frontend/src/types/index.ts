@@ -217,6 +217,7 @@ export type OrderItem = {
 
 export type Order = {
   orderNumber: string;
+  createdAt?: string;
   status: OrderStatus;
   subtotal: number;
   shipping: number;
