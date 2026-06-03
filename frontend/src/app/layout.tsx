@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppProviders } from "@/providers";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
           <Header />
           <main className="flex flex-1 flex-col">{children}</main>
           <Footer />
+          <CartDrawer />
         </AppProviders>
       </body>
     </html>

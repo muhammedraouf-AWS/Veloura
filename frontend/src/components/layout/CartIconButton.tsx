@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore, cartTotalItems } from "@/lib/store/cart";
@@ -11,14 +10,15 @@ export function CartIconButton() {
   useEffect(() => setMounted(true), []);
 
   const count = useCartStore(cartTotalItems);
+  const openCart = useCartStore((s) => s.openCart);
 
   return (
     <div className="relative">
       <Button
         variant="ghost"
         size="icon"
-        aria-label="Cart"
-        render={<Link href="/cart" />}
+        aria-label="Open cart"
+        onClick={openCart}
       >
         <ShoppingBag className="h-5 w-5" />
       </Button>

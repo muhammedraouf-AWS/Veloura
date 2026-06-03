@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { QuickAddButton } from './QuickAddButton';
+import { ShoppingBag } from 'lucide-react';
 import type { Product, StrapiEntity } from '@/types';
 
 type Props = {
@@ -52,16 +52,12 @@ export function ProductCard({ product }: Props) {
           )}
         </div>
 
-        {/* Quick-add overlay — slides up on hover */}
+        {/* Overlay — slides up on hover, navigates via the parent Link */}
         <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-          <QuickAddButton
-            productId={product.id}
-            documentId={product.documentId}
-            slug={slug}
-            title={title}
-            image={imageUrl ?? ''}
-            price={price}
-          />
+          <div className="flex items-center justify-center gap-2 w-full bg-[oklch(0.18_0.04_280/0.85)] backdrop-blur-sm text-[oklch(0.97_0.01_60)] font-sans text-[0.7rem] tracking-[0.15em] uppercase py-3 pointer-events-none">
+            <ShoppingBag className="h-3.5 w-3.5" />
+            Select size
+          </div>
         </div>
       </div>
 

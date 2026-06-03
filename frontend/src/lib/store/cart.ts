@@ -4,10 +4,13 @@ import type { CartItem } from '@/types';
 
 type CartState = {
   items: CartItem[];
+  isOpen: boolean;
   addItem: (item: CartItem) => void;
   removeItem: (productId: number, variantId?: number) => void;
   updateQuantity: (productId: number, variantId: number | undefined, qty: number) => void;
   clearCart: () => void;
+  openCart: () => void;
+  closeCart: () => void;
 };
 
 function sameItem(a: CartItem, b: { productId: number; variantId?: number }) {
@@ -18,6 +21,7 @@ export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       items: [],
+      isOpen: false,
 
       addItem: (item) =>
         set((state) => {
@@ -48,10 +52,13 @@ export const useCartStore = create<CartState>()(
         })),
 
       clearCart: () => set({ items: [] }),
+      openCart: () => set({ isOpen: true }),
+      closeCart: () => set({ isOpen: false }),
     }),
     {
       name: 'veloura-cart',
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ items: state.items }), // never persist drawer state
     }
   )
 );
