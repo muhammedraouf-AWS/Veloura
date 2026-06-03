@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { checkoutSchema, type CheckoutFormData } from "@/lib/validations/checkout";
+import { placeOrderAction } from "@/lib/actions/order.actions";
 
 type Props = {
   userEmail: string;
@@ -29,11 +30,15 @@ export function CheckoutForm({ userEmail }: Props) {
     },
   });
 
-  async function onSubmit(_data: CheckoutFormData) {
+  async function onSubmit(data: CheckoutFormData) {
     setServerError(null);
-    // Phase 19: placeOrderAction(_data, items) wired here
-    // For now, show a placeholder message
-    setServerError("Order placement coming in the next phase. Your form is valid!");
+    const result = await placeOrderAction(data, items);
+    if (result.success) {
+      clearCart();
+      router.push(`/order-confirmation?number=${result.data.orderNumber}`);
+    } else {
+      setServerError(result.error);
+    }
   }
 
   return (
