@@ -12,19 +12,54 @@ const PRODUCT_LIST_PARAMS = {
   'sort': 'createdAt:desc',
 };
 
-export async function getProducts(page = 1): Promise<{
+type ProductFilterOptions = {
+  sort?: string;
+  category?: string;
+  price?: string;
+};
+
+const SORT_PARAM: Record<string, string> = {
+  featured:   'isFeatured:desc,createdAt:desc',
+  price_asc:  'price:asc',
+  price_desc: 'price:desc',
+  newest:     'createdAt:desc',
+};
+
+export async function getProducts(
+  page = 1,
+  filters: ProductFilterOptions = {}
+): Promise<{
   products: ReturnType<typeof normalizeStrapiMany<Product>>;
   pagination: StrapiListResponse<Product>['meta']['pagination'];
 }> {
+  const params: Record<string, string | number | boolean> = {
+    ...PRODUCT_LIST_PARAMS,
+    'pagination[page]': page,
+    'pagination[pageSize]': DEFAULT_PAGE_SIZE,
+  };
+
+  if (filters.sort && SORT_PARAM[filters.sort]) {
+    params['sort'] = SORT_PARAM[filters.sort]!;
+  }
+
+  if (filters.category) {
+    params['filters[category][slug][$eq]'] = filters.category;
+  }
+
+  if (filters.price === 'under_100') {
+    params['filters[price][$lt]'] = 100;
+  } else if (filters.price === '100_200') {
+    params['filters[price][$gte]'] = 100;
+    params['filters[price][$lte]'] = 200;
+  } else if (filters.price === 'over_200') {
+    params['filters[price][$gt]'] = 200;
+  }
+
   const response = await strapiClient.get<StrapiListResponse<Product>>({
     path: '/products',
     tags: ['products'],
     revalidate: 60,
-    params: {
-      ...PRODUCT_LIST_PARAMS,
-      'pagination[page]': page,
-      'pagination[pageSize]': DEFAULT_PAGE_SIZE,
-    },
+    params,
   });
 
   return {
