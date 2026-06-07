@@ -4,8 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getAuthToken } from "@/lib/utils/auth";
 import { getCurrentUser } from "@/lib/api/user.api";
-import { CheckoutForm } from "@/components/checkout/CheckoutForm";
-import { OrderSummary } from "@/components/checkout/OrderSummary";
+import { CheckoutClient } from "@/components/checkout/CheckoutClient";
 
 export const metadata: Metadata = {
   title: "Checkout | Veloura",
@@ -22,7 +21,6 @@ export default async function CheckoutPage() {
     <div className="bg-[oklch(0.97_0.01_60)] min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        {/* Header */}
         <div className="mb-10">
           <Link
             href="/cart"
@@ -36,22 +34,8 @@ export default async function CheckoutPage() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 xl:gap-16">
+        <CheckoutClient userEmail={user.email} />
 
-          {/* ── Left: form ── */}
-          <CheckoutForm userEmail={user.email} />
-
-          {/* ── Right: order summary ── */}
-          <aside className="lg:sticky lg:top-24 self-start">
-            <div className="border border-[oklch(0.18_0.04_280/0.1)] p-6">
-              <h2 className="font-heading text-[oklch(0.18_0.04_280)] text-xl mb-6">
-                Order summary
-              </h2>
-              <OrderSummary />
-            </div>
-          </aside>
-
-        </div>
       </div>
     </div>
   );

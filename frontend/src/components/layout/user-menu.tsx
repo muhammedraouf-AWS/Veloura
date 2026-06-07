@@ -52,13 +52,12 @@ export function UserMenu({ isLoggedIn }: { isLoggedIn: boolean }) {
           Wishlist
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <form action={logoutAction}>
-          <DropdownMenuItem
-            render={<button type="submit" className="w-full cursor-pointer" />}
-          >
-            Sign out
-          </DropdownMenuItem>
-        </form>
+        <DropdownMenuItem
+          render={<div className="w-full cursor-pointer" />}
+          onClick={() => { void logoutAction(); }}
+        >
+          Sign out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

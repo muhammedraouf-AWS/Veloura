@@ -9,6 +9,7 @@ import {
   SHIPPING_THRESHOLD,
   SHIPPING_COST,
 } from "@/lib/validations/checkout";
+import { validateCouponAction } from "@/lib/actions/coupon.actions";
 import type { ActionResult, CartItem } from "@/types";
 
 function generateOrderNumber(): string {
@@ -20,7 +21,8 @@ function generateOrderNumber(): string {
 
 export async function placeOrderAction(
   formData: CheckoutFormData,
-  items: CartItem[]
+  items: CartItem[],
+  couponCode?: string
 ): Promise<ActionResult<{ orderNumber: string }>> {
   // 1. Auth
   let token: string;
@@ -45,11 +47,23 @@ export async function placeOrderAction(
   const user = await getCurrentUser(token);
   if (!user) return { success: false, error: "Could not verify your account." };
 
-  // 5. Recalculate totals server-side
+  // 5. Recalculate totals server-side (never trust client)
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const tax = 0;
-  const total = subtotal + shipping + tax;
+
+  // Re-validate coupon server-side
+  let discount = 0;
+  let couponDocumentId: string | undefined;
+  if (couponCode) {
+    const couponResult = await validateCouponAction(couponCode, subtotal);
+    if (couponResult.success) {
+      discount = couponResult.data.discount;
+      couponDocumentId = couponResult.data.documentId;
+    }
+  }
+
+  const total = Math.max(0, subtotal + shipping + tax - discount);
 
   const address = {
     fullName: parsed.data.fullName,
@@ -83,6 +97,7 @@ export async function placeOrderAction(
         billingAddress: address,
         paymentMethod: "cod",
         paymentStatus: "unpaid",
+        ...(couponDocumentId ? { coupon: couponDocumentId } : {}),
       },
     });
 

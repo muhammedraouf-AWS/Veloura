@@ -7,12 +7,14 @@ import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { checkoutSchema, type CheckoutFormData } from "@/lib/validations/checkout";
 import { placeOrderAction } from "@/lib/actions/order.actions";
+import type { ValidatedCoupon } from "@/lib/actions/coupon.actions";
 
 type Props = {
   userEmail: string;
+  appliedCoupon: ValidatedCoupon | null;
 };
 
-export function CheckoutForm({ userEmail }: Props) {
+export function CheckoutForm({ userEmail, appliedCoupon }: Props) {
   const router = useRouter();
   const items = useCartStore((s) => s.items);
   const clearCart = useCartStore((s) => s.clearCart);
@@ -32,7 +34,7 @@ export function CheckoutForm({ userEmail }: Props) {
 
   async function onSubmit(data: CheckoutFormData) {
     setServerError(null);
-    const result = await placeOrderAction(data, items);
+    const result = await placeOrderAction(data, items, appliedCoupon?.code);
     if (result.success) {
       clearCart();
       router.push(`/order-confirmation?number=${result.data.orderNumber}`);
