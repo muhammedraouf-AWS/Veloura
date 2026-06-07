@@ -144,6 +144,17 @@ export default async function OrderDetailPage({ params }: Props) {
                   <span className="text-[oklch(0.18_0.04_280)]">${order.tax.toFixed(2)}</span>
                 </div>
               )}
+              {(() => {
+                const discount = parseFloat(
+                  (order.subtotal + order.shipping + order.tax - order.total).toFixed(2)
+                );
+                return discount > 0 ? (
+                  <div className="flex justify-between text-sm font-sans">
+                    <span className="text-[oklch(0.40_0.12_155)]">Coupon discount</span>
+                    <span className="text-[oklch(0.40_0.12_155)]">−${discount.toFixed(2)}</span>
+                  </div>
+                ) : null;
+              })()}
               <div className="flex justify-between pt-3 border-t border-[oklch(0.18_0.04_280/0.08)] font-medium">
                 <span className="text-[oklch(0.18_0.04_280)]">Total</span>
                 <span className="font-heading text-[oklch(0.18_0.04_280)] text-xl">
