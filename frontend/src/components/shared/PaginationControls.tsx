@@ -7,7 +7,10 @@ type Props = {
 };
 
 function pageHref(basePath: string, page: number) {
-  return `${basePath}?page=${page}`;
+  const [path, existingQuery] = basePath.split('?');
+  const params = new URLSearchParams(existingQuery);
+  params.set('page', String(page));
+  return `${path}?${params.toString()}`;
 }
 
 function getPageNumbers(current: number, total: number): (number | '…')[] {

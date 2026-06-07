@@ -73,6 +73,37 @@ export async function getProductsByCategory(
   };
 }
 
+export async function searchProducts(
+  query: string,
+  page = 1
+): Promise<{
+  products: ReturnType<typeof normalizeStrapiMany<Product>>;
+  pagination: StrapiListResponse<Product>['meta']['pagination'];
+}> {
+  if (!query.trim()) {
+    return {
+      products: [],
+      pagination: { page: 1, pageSize: DEFAULT_PAGE_SIZE, pageCount: 0, total: 0 },
+    };
+  }
+
+  const response = await strapiClient.get<StrapiListResponse<Product>>({
+    path: '/products',
+    revalidate: 0,
+    params: {
+      ...PRODUCT_LIST_PARAMS,
+      'filters[title][$containsi]': query,
+      'pagination[page]': page,
+      'pagination[pageSize]': DEFAULT_PAGE_SIZE,
+    },
+  });
+
+  return {
+    products: normalizeStrapiMany(response),
+    pagination: response.meta.pagination,
+  };
+}
+
 export async function getProductBySlug(slug: string): Promise<ReturnType<typeof normalizeStrapiOne<Product>> | null> {
   const response = await strapiClient.get<StrapiListResponse<Product>>({
     path: '/products',
