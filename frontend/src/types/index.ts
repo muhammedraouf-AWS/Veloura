@@ -178,6 +178,7 @@ export type Review = {
   body: string;
   isVerified: boolean;
   isApproved: boolean;
+  createdAt?: string;
   product?: StrapiEntity<Product> | null;
   user?: StrapiEntity<AuthUser> | null;
 };

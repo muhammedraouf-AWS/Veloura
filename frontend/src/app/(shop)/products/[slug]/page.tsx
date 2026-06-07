@@ -1,8 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getProductBySlug, getProducts } from '@/lib/api/product.api';
+import { getProductReviews } from '@/lib/api/review.api';
+import { getAuthToken } from '@/lib/utils/auth';
 import { ProductImageGallery } from '@/components/product/ProductImageGallery';
 import { ProductActions } from '@/components/product/ProductActions';
+import { ReviewsList } from '@/components/product/ReviewsList';
+import { ReviewForm } from '@/components/product/ReviewForm';
 import type { StrapiEntity, ProductVariant } from '@/types';
 
 type Props = {
@@ -28,7 +32,12 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+
+  const [product, reviews, token] = await Promise.all([
+    getProductBySlug(slug),
+    getProductReviews(slug),
+    getAuthToken(),
+  ]);
 
   if (!product) notFound();
 
@@ -152,6 +161,22 @@ export default async function ProductDetailPage({ params }: Props) {
 
           </div>
         </div>
+
+        {/* ── Reviews ── */}
+        <div className="mt-16 pt-12 border-t border-[oklch(0.35_0.08_310/0.12)]">
+          <h2 className="font-heading text-[oklch(0.18_0.04_280)] text-3xl mb-10">
+            Customer Reviews
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+            <ReviewsList reviews={reviews} />
+            <ReviewForm
+              productDocumentId={product.documentId}
+              productSlug={slug}
+              isLoggedIn={!!token}
+            />
+          </div>
+        </div>
+
       </div>
     </div>
   );
