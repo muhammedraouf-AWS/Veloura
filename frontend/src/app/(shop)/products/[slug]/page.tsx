@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getProductBySlug, getProducts } from '@/lib/api/product.api';
 import { getProductReviews } from '@/lib/api/review.api';
 import { getAuthToken } from '@/lib/utils/auth';
+import { getUserWishlistIds } from '@/lib/api/user.api';
 import { ProductImageGallery } from '@/components/product/ProductImageGallery';
 import { ProductActions } from '@/components/product/ProductActions';
 import { ReviewsList } from '@/components/product/ReviewsList';
@@ -14,8 +15,12 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const { products } = await getProducts();
-  return products.map((p) => ({ slug: p.slug }));
+  try {
+    const { products } = await getProducts();
+    return products.map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -33,13 +38,18 @@ export async function generateMetadata({ params }: Props) {
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
 
-  const [product, reviews, token] = await Promise.all([
+  const token = await getAuthToken();
+
+  const [product, reviews, wishlistData] = await Promise.all([
     getProductBySlug(slug),
     getProductReviews(slug),
-    getAuthToken(),
+    token ? getUserWishlistIds(token) : Promise.resolve(null),
   ]);
 
   if (!product) notFound();
+
+  const isInWishlist =
+    wishlistData?.wishlist?.some((p) => p.id === product.id) ?? false;
 
   const {
     title,
@@ -125,6 +135,8 @@ export default async function ProductDetailPage({ params }: Props) {
               compareAtPrice={compareAtPrice}
               baseInventory={inventory}
               variants={safeVariants}
+              isLoggedIn={!!token}
+              isInWishlist={isInWishlist}
             />
 
             {/* Divider */}

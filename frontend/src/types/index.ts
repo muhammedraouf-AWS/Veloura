@@ -44,6 +44,7 @@ export type AuthUser = {
   confirmed: boolean;
   blocked: boolean;
   createdAt?: string;
+  wishlist?: StrapiEntity<Product>[];
 };
 
 export type AuthResponse = {

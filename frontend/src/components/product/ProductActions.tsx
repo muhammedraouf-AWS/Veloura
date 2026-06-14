@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useCartStore } from '@/lib/store/cart';
+import { toggleWishlistAction } from '@/lib/actions/user.actions';
 import type { ProductVariant, StrapiEntity } from '@/types';
 
 type Props = {
@@ -15,6 +16,8 @@ type Props = {
   compareAtPrice?: number | null;
   baseInventory: number;
   variants: StrapiEntity<ProductVariant>[];
+  isLoggedIn: boolean;
+  isInWishlist: boolean;
 };
 
 export function ProductActions({
@@ -27,11 +30,15 @@ export function ProductActions({
   compareAtPrice,
   baseInventory,
   variants,
+  isLoggedIn,
+  isInWishlist: initialInWishlist,
 }: Props) {
   const hasVariants = variants.length > 0;
   const [selected, setSelected] = useState<StrapiEntity<ProductVariant> | null>(
     hasVariants ? (variants[0] ?? null) : null
   );
+  const [inWishlist, setInWishlist] = useState(initialInWishlist);
+  const [wishlistPending, startWishlistTransition] = useTransition();
 
   const addItem = useCartStore((s) => s.addItem);
 
@@ -61,6 +68,24 @@ export function ProductActions({
     });
   }
 
+  function handleWishlistToggle() {
+    if (!isLoggedIn) {
+      toast.error('Sign in to save to your wishlist');
+      return;
+    }
+    const next = !inWishlist;
+    setInWishlist(next);
+    startWishlistTransition(async () => {
+      const result = await toggleWishlistAction(productId, next);
+      if (!result.success) {
+        setInWishlist(!next);
+        toast.error(result.error);
+      } else {
+        toast.success(next ? 'Added to wishlist' : 'Removed from wishlist');
+      }
+    });
+  }
+
   return (
     <div>
       {/* Price */}
@@ -82,7 +107,7 @@ export function ProductActions({
 
       {/* Stock indicator */}
       <p
-        className={`text-xs font-sans tracking-[0.1em] uppercase mb-6 ${
+        className={`text-xs font-sans tracking-widest uppercase mb-6 ${
           inStock ? 'text-[oklch(0.45_0.15_145)]' : 'text-[oklch(0.55_0.18_25)]'
         }`}
       >
@@ -132,10 +157,16 @@ export function ProductActions({
           {inStock ? 'Add to Cart' : 'Out of Stock'}
         </button>
         <button
-          aria-label="Add to wishlist"
-          className="px-4 py-4 border border-[oklch(0.35_0.12_310/0.3)] text-[oklch(0.35_0.12_310)] hover:border-[oklch(0.35_0.12_310)] transition-colors text-lg"
+          onClick={handleWishlistToggle}
+          disabled={wishlistPending}
+          aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+          className={`px-4 py-4 border transition-all duration-200 text-lg disabled:opacity-40 ${
+            inWishlist
+              ? 'border-[oklch(0.35_0.12_310)] bg-[oklch(0.35_0.12_310/0.08)] text-[oklch(0.35_0.12_310)]'
+              : 'border-[oklch(0.35_0.12_310/0.3)] text-[oklch(0.35_0.12_310)] hover:border-[oklch(0.35_0.12_310)]'
+          }`}
         >
-          ♡
+          {inWishlist ? '♥' : '♡'}
         </button>
       </div>
     </div>
