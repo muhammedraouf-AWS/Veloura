@@ -3,7 +3,8 @@ import Link from "next/link";
 import { LoginForm } from "@/components/auth/LoginForm";
 
 export const metadata: Metadata = {
-  title: "Sign In | Veloura",
+  title: "Sign In",
+  description: "Sign in to your Veloura account to manage orders, wishlist, and profile.",
 };
 
 type Props = {

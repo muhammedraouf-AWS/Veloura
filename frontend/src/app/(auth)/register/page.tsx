@@ -3,7 +3,8 @@ import Link from "next/link";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata: Metadata = {
-  title: "Create Account | Veloura",
+  title: "Create Account",
+  description: "Join Veloura and discover your signature scent — free account, exclusive access.",
 };
 
 export default function RegisterPage() {

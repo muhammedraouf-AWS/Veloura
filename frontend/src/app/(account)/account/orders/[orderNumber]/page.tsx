@@ -13,7 +13,11 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { orderNumber } = await params;
-  return { title: `Order ${orderNumber} | Veloura` };
+  return {
+    title: `Order ${orderNumber}`,
+    description: `Details for Veloura order ${orderNumber}.`,
+    robots: { index: false, follow: false },
+  };
 }
 
 export default async function OrderDetailPage({ params }: Props) {

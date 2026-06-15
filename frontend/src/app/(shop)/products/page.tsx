@@ -5,9 +5,16 @@ import { ProductGrid } from '@/components/product/ProductGrid';
 import { PaginationControls } from '@/components/shared/PaginationControls';
 import { ProductFilters } from '@/components/shared/ProductFilters';
 
-export const metadata = {
-  title: 'All Fragrances | Veloura',
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'All Fragrances',
   description: 'Explore our full collection of luxury perfumes — from delicate florals to rich ouds.',
+  openGraph: {
+    title: 'All Fragrances | Veloura',
+    description: 'Explore our full collection of luxury perfumes — from delicate florals to rich ouds.',
+    url: '/products',
+  },
 };
 
 type Props = {

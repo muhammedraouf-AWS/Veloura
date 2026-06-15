@@ -7,7 +7,9 @@ import { getCurrentUser } from "@/lib/api/user.api";
 import { CheckoutClient } from "@/components/checkout/CheckoutClient";
 
 export const metadata: Metadata = {
-  title: "Checkout | Veloura",
+  title: "Checkout",
+  description: "Complete your Veloura order — shipping details and payment.",
+  robots: { index: false, follow: false },
 };
 
 export default async function CheckoutPage() {

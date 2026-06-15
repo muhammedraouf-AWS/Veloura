@@ -4,8 +4,12 @@ import { getAuthToken } from '@/lib/utils/auth';
 import { getUserWithWishlist } from '@/lib/api/user.api';
 import { WishlistCard } from '@/components/account/WishlistCard';
 
-export const metadata = {
-  title: 'Wishlist | Veloura',
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Wishlist',
+  description: 'Your saved Veloura fragrances — items you love, ready when you are.',
+  robots: { index: false, follow: false },
 };
 
 export default async function WishlistPage() {

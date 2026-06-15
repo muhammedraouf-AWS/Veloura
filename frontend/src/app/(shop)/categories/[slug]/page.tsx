@@ -24,11 +24,26 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
   if (!category) return {};
+  const description = category.description ?? `Shop ${category.name} fragrances at Veloura.`;
+  const ogImage =
+    category.image?.formats?.large?.url ??
+    category.image?.formats?.medium?.url ??
+    category.image?.url;
   return {
-    title: `${category.name} | Veloura`,
-    description:
-      category.description ??
-      `Shop ${category.name} fragrances at Veloura.`,
+    title: category.name,
+    description,
+    openGraph: {
+      title: `${category.name} | Veloura`,
+      description,
+      url: `/categories/${slug}`,
+      ...(ogImage && { images: [{ url: ogImage, alt: category.name }] }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${category.name} | Veloura`,
+      description,
+      ...(ogImage && { images: [ogImage] }),
+    },
   };
 }
 

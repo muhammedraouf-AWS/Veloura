@@ -27,11 +27,27 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return {};
+  const description =
+    product.shortDescription ?? `Discover ${product.title} — a luxury fragrance by Veloura.`;
+  const ogImage =
+    product.images?.[0]?.formats?.large?.url ??
+    product.images?.[0]?.formats?.medium?.url ??
+    product.images?.[0]?.url;
   return {
-    title: `${product.title} | Veloura`,
-    description:
-      product.shortDescription ??
-      `Discover ${product.title} — a luxury fragrance by Veloura.`,
+    title: product.title,
+    description,
+    openGraph: {
+      title: `${product.title} | Veloura`,
+      description,
+      url: `/products/${slug}`,
+      ...(ogImage && { images: [{ url: ogImage, alt: product.title }] }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.title} | Veloura`,
+      description,
+      ...(ogImage && { images: [ogImage] }),
+    },
   };
 }
 

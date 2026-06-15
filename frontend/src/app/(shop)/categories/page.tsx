@@ -1,9 +1,15 @@
+import type { Metadata } from 'next';
 import { getCategories } from '@/lib/api/category.api';
 import { CategoryCard } from '@/components/shared/CategoryCard';
 
-export const metadata = {
-  title: 'Shop by Category | Veloura',
+export const metadata: Metadata = {
+  title: 'Shop by Category',
   description: 'Explore our fragrance families — from delicate florals and fresh citrus to rich ouds and warm orientals.',
+  openGraph: {
+    title: 'Shop by Category | Veloura',
+    description: 'Explore our fragrance families — from delicate florals and fresh citrus to rich ouds and warm orientals.',
+    url: '/categories',
+  },
 };
 
 export default async function CategoriesPage() {

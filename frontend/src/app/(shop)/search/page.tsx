@@ -11,8 +11,14 @@ type Props = {
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const { q } = await searchParams;
+  const title = q ? `"${q}" — Search` : "Search";
+  const description = q
+    ? `Search results for "${q}" — browse Veloura's luxury fragrance collection.`
+    : "Search Veloura's collection of premium perfumes and fine fragrances.";
   return {
-    title: q ? `"${q}" — Search | Veloura` : "Search | Veloura",
+    title,
+    description,
+    openGraph: { title: q ? `"${q}" — Search | Veloura` : "Search | Veloura", description },
   };
 }
 

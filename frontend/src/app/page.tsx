@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
@@ -6,6 +7,18 @@ import { Reveal } from "@/components/shared/reveal"
 import { getFeaturedProducts } from "@/lib/api/product.api"
 import { getCategories } from "@/lib/api/category.api"
 import type { Category, Product, StrapiEntity } from "@/types"
+
+export const metadata: Metadata = {
+  title: "Veloura — Fine Fragrances",
+  description:
+    "Discover premium fragrances curated for the discerning nose. Explore our collection of luxury perfumes, from delicate florals to rich ouds.",
+  openGraph: {
+    title: "Veloura — Fine Fragrances",
+    description:
+      "Discover premium fragrances curated for the discerning nose. Explore our collection of luxury perfumes, from delicate florals to rich ouds.",
+    url: "/",
+  },
+};
 
 // ── Static assets (hero + brand story only — categories now from Strapi) ──────
 const IMG = {

@@ -8,7 +8,9 @@ import { getUserOrders } from "@/lib/api/order.api";
 import type { OrderStatus, PaymentStatus } from "@/types";
 
 export const metadata: Metadata = {
-  title: "My Orders | Veloura",
+  title: "My Orders",
+  description: "View your Veloura order history and track current orders.",
+  robots: { index: false, follow: false },
 };
 
 export default async function OrdersPage() {

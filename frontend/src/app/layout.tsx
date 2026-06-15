@@ -18,11 +18,33 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "Veloura",
+    default: "Veloura — Fine Fragrances",
     template: "%s | Veloura",
   },
-  description: "Discover premium fragrances curated for the discerning nose.",
+  description:
+    "Discover premium fragrances curated for the discerning nose. Explore our collection of luxury perfumes for every occasion.",
+  keywords: ["perfume", "fragrance", "luxury", "scent", "cologne", "eau de parfum"],
+  openGraph: {
+    type: "website",
+    siteName: "Veloura",
+    title: {
+      default: "Veloura — Fine Fragrances",
+      template: "%s | Veloura",
+    },
+    description:
+      "Discover premium fragrances curated for the discerning nose. Explore our collection of luxury perfumes for every occasion.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: {
+      default: "Veloura — Fine Fragrances",
+      template: "%s | Veloura",
+    },
+    description:
+      "Discover premium fragrances curated for the discerning nose. Explore our collection of luxury perfumes for every occasion.",
+  },
 };
 
 export default function RootLayout({

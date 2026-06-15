@@ -3,7 +3,9 @@ import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Order Confirmed | Veloura",
+  title: "Order Confirmed",
+  description: "Your Veloura order has been placed successfully.",
+  robots: { index: false, follow: false },
 };
 
 type Props = {

@@ -5,7 +5,9 @@ import { getCurrentUser } from "@/lib/api/user.api";
 import { ProfileForm } from "@/components/account/ProfileForm";
 
 export const metadata: Metadata = {
-  title: "My Profile | Veloura",
+  title: "My Profile",
+  description: "Manage your Veloura account details and preferences.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ProfilePage() {
