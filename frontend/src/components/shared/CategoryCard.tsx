@@ -10,6 +10,7 @@ export function CategoryCard({ category }: Props) {
   const { name, slug, description, image } = category;
 
   const imageUrl =
+    image?.formats?.large?.url ??
     image?.formats?.medium?.url ??
     image?.formats?.small?.url ??
     image?.url ??

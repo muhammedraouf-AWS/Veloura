@@ -17,7 +17,11 @@ export function WishlistCard({ product }: Props) {
   const [pending, startTransition] = useTransition();
 
   const image = images?.[0];
-  const imageUrl = image?.formats?.medium?.url ?? image?.url ?? null;
+  const imageUrl =
+    image?.formats?.large?.url ??
+    image?.formats?.medium?.url ??
+    image?.url ??
+    null;
   const hasDiscount = compareAtPrice != null && compareAtPrice > price;
   const discountPct = hasDiscount
     ? Math.round((1 - price / compareAtPrice) * 100)
@@ -58,7 +62,7 @@ export function WishlistCard({ product }: Props) {
               src={imageUrl}
               alt={image?.alternativeText ?? title}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 768px) 50vw, 33vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
           ) : (

@@ -11,7 +11,11 @@ export function ProductCard({ product }: Props) {
   const { title, slug, price, compareAtPrice, shortDescription, images, category, isFeatured } = product;
 
   const image = images?.[0];
-  const imageUrl = image?.formats?.medium?.url ?? image?.url ?? null;
+  const imageUrl =
+    image?.formats?.large?.url ??
+    image?.formats?.medium?.url ??
+    image?.url ??
+    null;
   const imageAlt = image?.alternativeText ?? title;
   const hasDiscount = compareAtPrice != null && compareAtPrice > price;
   const discountPct = hasDiscount
@@ -27,7 +31,7 @@ export function ProductCard({ product }: Props) {
             src={imageUrl}
             alt={imageAlt}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
