@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
@@ -50,18 +51,16 @@ function formatPrice(price: number): string {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function HomePage() {
-  const [featuredProducts, categories] = await Promise.all([
-    getFeaturedProducts(),
-    getCategories(),
-  ])
-  const featured = featuredProducts.slice(0, 3)
-
+export default function HomePage() {
   return (
     <>
       <HeroSection />
-      {featured.length > 0 && <FeaturedSection products={featured} />}
-      {categories.length > 0 && <CollectionsSection categories={categories} />}
+      <Suspense fallback={<FeaturedSkeleton />}>
+        <FeaturedSection />
+      </Suspense>
+      <Suspense fallback={<CollectionsSkeleton />}>
+        <CollectionsSection />
+      </Suspense>
       <BrandStorySection />
       <NewsletterSection />
     </>
@@ -143,9 +142,10 @@ function HeroSection() {
   )
 }
 
-// ── Featured (live Strapi data) ───────────────────────────────────────────────
-function FeaturedSection({ products }: { products: StrapiEntity<Product>[] }) {
-  const [hero, ...secondary] = products
+// ── Featured (async RSC — streams independently) ──────────────────────────────
+async function FeaturedSection() {
+  const featuredProducts = await getFeaturedProducts()
+  const [hero, ...secondary] = featuredProducts.slice(0, 3)
   if (!hero) return null
 
   const heroImg = getProductImageUrl(hero)
@@ -262,8 +262,10 @@ function FeaturedSection({ products }: { products: StrapiEntity<Product>[] }) {
   )
 }
 
-// ── Collections (live Strapi data) ───────────────────────────────────────────
-function CollectionsSection({ categories }: { categories: StrapiEntity<Category>[] }) {
+// ── Collections (async RSC — streams independently) ───────────────────────────
+async function CollectionsSection() {
+  const categories = await getCategories()
+  if (categories.length === 0) return null
   return (
     <section className="py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -408,6 +410,46 @@ function NewsletterSection() {
             No frequency commitments. Unsubscribe at any time.
           </p>
         </Reveal>
+      </div>
+    </section>
+  )
+}
+
+// ── Suspense skeletons ────────────────────────────────────────────────────────
+
+function FeaturedSkeleton() {
+  return (
+    <section className="bg-cream py-20 lg:py-28 animate-pulse">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 flex items-end justify-between">
+          <div className="space-y-3">
+            <div className="h-2.5 w-28 bg-ink/8" />
+            <div className="h-9 w-56 bg-ink/10" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:h-160">
+          <div className="sm:col-span-2 sm:row-span-2 aspect-[3/4] sm:aspect-auto bg-plum/15" />
+          <div className="aspect-[4/5] sm:aspect-auto bg-plum/10" />
+          <div className="aspect-[4/5] sm:aspect-auto bg-plum/10" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function CollectionsSkeleton() {
+  return (
+    <section className="py-20 lg:py-28 animate-pulse">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-10 space-y-3">
+          <div className="h-2.5 w-36 bg-ink/8" />
+          <div className="h-9 w-48 bg-ink/10" />
+        </div>
+        <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="aspect-[3/4] bg-plum/12" />
+          ))}
+        </div>
       </div>
     </section>
   )

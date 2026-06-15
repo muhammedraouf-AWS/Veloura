@@ -66,7 +66,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-12 lg:items-start">
 
           {/* ProductFilters: mobile = toggle button above grid; desktop = sticky sidebar */}
-          <Suspense>
+          <Suspense fallback={<FilterSkeleton />}>
             <ProductFilters categories={categoryList} />
           </Suspense>
 
@@ -83,6 +83,21 @@ export default async function ProductsPage({ searchParams }: Props) {
 
         </div>
       </div>
+    </div>
+  );
+}
+
+function FilterSkeleton() {
+  return (
+    <div className="hidden lg:block space-y-6 animate-pulse">
+      <div className="h-3 w-24 bg-[oklch(0.88_0.01_280/0.35)]" />
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="space-y-2 pt-4 border-t border-[oklch(0.18_0.04_280/0.08)]">
+          <div className="h-3 w-20 bg-[oklch(0.88_0.01_280/0.3)]" />
+          <div className="h-3 w-full bg-[oklch(0.88_0.01_280/0.15)]" />
+          <div className="h-3 w-3/4 bg-[oklch(0.88_0.01_280/0.15)]" />
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,13 +1,12 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getProductBySlug, getProducts } from '@/lib/api/product.api';
-import { getProductReviews } from '@/lib/api/review.api';
 import { getAuthToken } from '@/lib/utils/auth';
 import { getUserWishlistIds } from '@/lib/api/user.api';
 import { ProductImageGallery } from '@/components/product/ProductImageGallery';
 import { ProductActions } from '@/components/product/ProductActions';
-import { ReviewsList } from '@/components/product/ReviewsList';
-import { ReviewForm } from '@/components/product/ReviewForm';
+import { ReviewsSection } from '@/components/product/ReviewsSection';
 import type { StrapiEntity, ProductVariant } from '@/types';
 
 type Props = {
@@ -56,9 +55,8 @@ export default async function ProductDetailPage({ params }: Props) {
 
   const token = await getAuthToken();
 
-  const [product, reviews, wishlistData] = await Promise.all([
+  const [product, wishlistData] = await Promise.all([
     getProductBySlug(slug),
-    getProductReviews(slug),
     token ? getUserWishlistIds(token) : Promise.resolve(null),
   ]);
 
@@ -190,21 +188,40 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
         </div>
 
-        {/* ── Reviews ── */}
-        <div className="mt-16 pt-12 border-t border-[oklch(0.35_0.08_310/0.12)]">
-          <h2 className="font-heading text-[oklch(0.18_0.04_280)] text-3xl mb-10">
-            Customer Reviews
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            <ReviewsList reviews={reviews} />
-            <ReviewForm
-              productDocumentId={product.documentId}
-              productSlug={slug}
-              isLoggedIn={!!token}
-            />
-          </div>
-        </div>
+        {/* ── Reviews (streamed independently) ── */}
+        <Suspense fallback={<ReviewsSkeleton />}>
+          <ReviewsSection
+            slug={slug}
+            productDocumentId={product.documentId}
+            isLoggedIn={!!token}
+          />
+        </Suspense>
 
+      </div>
+    </div>
+  );
+}
+
+function ReviewsSkeleton() {
+  return (
+    <div className="mt-16 pt-12 border-t border-[oklch(0.35_0.08_310/0.12)] animate-pulse">
+      <div className="h-8 w-48 bg-[oklch(0.88_0.01_280/0.35)] mb-10" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="space-y-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="py-5 space-y-3 border-b border-[oklch(0.35_0.08_310/0.1)]">
+              <div className="h-3 w-20 bg-[oklch(0.88_0.01_280/0.3)]" />
+              <div className="h-4 w-44 bg-[oklch(0.88_0.01_280/0.35)]" />
+              <div className="h-3 w-full bg-[oklch(0.88_0.01_280/0.2)]" />
+              <div className="h-3 w-3/4 bg-[oklch(0.88_0.01_280/0.2)]" />
+            </div>
+          ))}
+        </div>
+        <div className="space-y-4">
+          <div className="h-4 w-32 bg-[oklch(0.88_0.01_280/0.3)]" />
+          <div className="h-24 w-full bg-[oklch(0.88_0.01_280/0.15)]" />
+          <div className="h-10 w-28 bg-[oklch(0.88_0.04_310/0.25)]" />
+        </div>
       </div>
     </div>
   );
