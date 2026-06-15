@@ -85,3 +85,80 @@ export async function logoutAction(): Promise<void> {
   await clearAuthCookie();
   redirect("/");
 }
+
+// ── forgotPasswordAction ──────────────────────────────────────────────────────
+export async function forgotPasswordAction(
+  _prevState: ActionResult<null> | null,
+  formData: FormData
+): Promise<ActionResult<null>> {
+  const email = formData.get("email");
+
+  if (typeof email !== "string" || !email.trim()) {
+    return { success: false, error: "Please enter your email address." };
+  }
+
+  try {
+    const res = await fetch(`${STRAPI_URL}/api/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const json = await res.json().catch(() => null);
+      const message: string = json?.error?.message ?? "Request failed.";
+      return { success: false, error: message };
+    }
+
+    return { success: true, data: null };
+  } catch {
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
+}
+
+// ── resetPasswordAction ───────────────────────────────────────────────────────
+export async function resetPasswordAction(
+  _prevState: ActionResult<null> | null,
+  formData: FormData
+): Promise<ActionResult<null>> {
+  const code = formData.get("code");
+  const password = formData.get("password");
+  const passwordConfirmation = formData.get("passwordConfirmation");
+
+  if (
+    typeof code !== "string" ||
+    typeof password !== "string" ||
+    typeof passwordConfirmation !== "string"
+  ) {
+    return { success: false, error: "Invalid form data." };
+  }
+
+  if (password !== passwordConfirmation) {
+    return { success: false, error: "Passwords do not match." };
+  }
+
+  if (password.length < 6) {
+    return { success: false, error: "Password must be at least 6 characters." };
+  }
+
+  try {
+    const res = await fetch(`${STRAPI_URL}/api/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, password, passwordConfirmation }),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const json = await res.json().catch(() => null);
+      const message: string =
+        json?.error?.message ?? "Reset failed. The link may have expired.";
+      return { success: false, error: message };
+    }
+
+    return { success: true, data: null };
+  } catch {
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
+}

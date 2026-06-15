@@ -4,7 +4,8 @@ import { getCategories } from '@/lib/api/category.api';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { PaginationControls } from '@/components/shared/PaginationControls';
 import { ProductFilters } from '@/components/shared/ProductFilters';
-
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
+import type { Pagination } from '@/types';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -30,10 +31,22 @@ export default async function ProductsPage({ searchParams }: Props) {
   const { page: pageParam, sort, category, price } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1);
 
-  const [{ products, pagination }, categories] = await Promise.all([
-    getProducts(page, { sort, category, price }),
-    getCategories(),
-  ]);
+  let products: Awaited<ReturnType<typeof getProducts>>['products'] = [];
+  let pagination: Pagination = { page, pageSize: DEFAULT_PAGE_SIZE, pageCount: 0, total: 0 };
+  let categories: Awaited<ReturnType<typeof getCategories>> = [];
+  let unavailable = false;
+
+  try {
+    const [productsResult, categoriesResult] = await Promise.all([
+      getProducts(page, { sort, category, price }),
+      getCategories(),
+    ]);
+    products = productsResult.products;
+    pagination = productsResult.pagination;
+    categories = categoriesResult;
+  } catch {
+    unavailable = true;
+  }
 
   // Build basePath preserving active filters for pagination links
   const filterParams = new URLSearchParams();
@@ -57,9 +70,15 @@ export default async function ProductsPage({ searchParams }: Props) {
           <h1 className="font-heading text-[oklch(0.18_0.04_280)] text-4xl md:text-5xl mb-3">
             All Fragrances
           </h1>
-          <p className="text-[oklch(0.45_0.04_280/0.7)] font-sans text-sm">
-            {pagination.total} {pagination.total === 1 ? 'fragrance' : 'fragrances'}
-          </p>
+          {unavailable ? (
+            <p className="text-[oklch(0.55_0.12_25/0.8)] font-sans text-sm">
+              Our catalogue is temporarily unavailable — please try again shortly.
+            </p>
+          ) : (
+            <p className="text-[oklch(0.45_0.04_280/0.7)] font-sans text-sm">
+              {pagination.total} {pagination.total === 1 ? 'fragrance' : 'fragrances'}
+            </p>
+          )}
         </div>
 
         {/* Filters sidebar (handles mobile toggle + desktop sidebar internally) + product grid */}

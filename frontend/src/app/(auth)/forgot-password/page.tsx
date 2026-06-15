@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Sign In",
-  description: "Sign in to your Veloura account to manage orders, wishlist, and profile.",
+  title: "Forgot Password",
+  description: "Reset your Veloura account password.",
+  robots: { index: false, follow: false },
 };
 
-type Props = {
-  searchParams: Promise<{ from?: string; reset?: string }>;
-};
-
-export default async function LoginPage({ searchParams }: Props) {
-  const { from, reset } = await searchParams;
-  const redirectTo = from && from.startsWith("/") ? from : "/account/profile";
-
+export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen">
 
@@ -28,7 +22,7 @@ export default async function LoginPage({ searchParams }: Props) {
         </Link>
         <blockquote className="space-y-4">
           <p className="font-heading text-[clamp(1.8rem,3vw,2.8rem)] text-[oklch(0.97_0.01_60)] leading-[1.15] italic">
-            &ldquo;Scent is the one memory you leave behind.&rdquo;
+            &ldquo;Even the most elusive memory can be reclaimed.&rdquo;
           </p>
           <footer className="text-[0.68rem] tracking-[0.2em] uppercase text-[oklch(0.97_0.01_60/0.45)]">
             Veloura Atelier
@@ -53,22 +47,14 @@ export default async function LoginPage({ searchParams }: Props) {
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <h1 className="font-heading text-[oklch(0.18_0.04_280)] text-4xl mb-2">
-              Welcome back
+              Forgot password?
             </h1>
             <p className="text-sm text-[oklch(0.45_0.04_280/0.6)] font-sans">
-              Sign in to your Veloura account
+              Enter your email and we&apos;ll send you a link to reset your password.
             </p>
           </div>
 
-          {reset === "1" && (
-            <div className="mb-6 bg-[oklch(0.45_0.12_155/0.08)] border border-[oklch(0.45_0.12_155/0.25)] px-4 py-3">
-              <p className="text-sm text-[oklch(0.35_0.10_155)] font-sans">
-                Password reset successfully. You can now sign in with your new password.
-              </p>
-            </div>
-          )}
-
-          <LoginForm redirectTo={redirectTo} />
+          <ForgotPasswordForm />
         </div>
       </div>
 

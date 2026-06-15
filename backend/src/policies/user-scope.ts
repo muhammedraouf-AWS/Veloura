@@ -5,7 +5,7 @@ import type { Core } from '@strapi/strapi';
  * Applied to GET /api/orders and GET /api/orders/:id so that
  * a logged-in user can only ever read their own orders.
  */
-const policy: Core.Policy = async (policyContext, _config, _helpers) => {
+const policy: Core.Policy = (policyContext, _config, _helpers) => {
   const ctx = policyContext as unknown as {
     state?: { user?: { id: number } };
     query: Record<string, unknown>;
